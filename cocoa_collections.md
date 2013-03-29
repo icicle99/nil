@@ -25,9 +25,11 @@ cocoa 的集合
 - NSArray & NSMutableArray
 - NSDictionary & NSMutableDictionary
 - NSSet & NSMutableSet
-- NSIndexSet & NSMutableIndexSet
-- NSString
 - NSOrderedSet & NSMutableOrderedSet(5.0)
+- NSIndexSet & NSMutableIndexSet
+- NSIndexPath
+- ~~NSString~~
+
 
 嗯，应该就是这么多：）
 
@@ -50,6 +52,36 @@ cocoa 的集合
     NSNumber *sum = @1;
     sum = @( [sum integerValue] + 1);
 ```
+
+然后在看这些个集合类，NSString就先不说了，cocoa编程还没见过把NSString当作集合操作的情景；indexSet 和 indexPath是和NSArray合起来使用的。orderedSet应该还是有点用的，不过需要在iOS5.0以后使用，嗯嗯，还是淡定吧。
+
+嗯嗯，这样说下来，主要就三个集合类型NSArray, NSDictionary, NSSet;其实说起来，array 和 set的功能都可以由dictionary来实现的，嗯lua其实就是这么干的。
+
+当然了，正常人都不会这么干。抛出去性能方面的考量（大多数时候都不是事），使用特定的类型能更明确的表达设计意图。嗯， 就是说：
+
+- 表达有序序列用 `NSArray`
+- 表达映射关系用 `NSDictionary`
+- 表达无序的集合类型用 `NSSet`
+
+嗯，平时用的最多的也就是前两者，嗯，大学的数据结构知识基本没用上。。。
+
+
+##集合上的操作
+
+- 访问集合中的元素
+- 检查包含关系，嗯这是所有集合类型的操作，不单单是针对set类型
+- 枚举
+
+对于mutable版本的类型，加两条
+
+- 添加元素
+- 删除元素
+
+这几种操作里面，我对cocoa api设计不满意的就是枚举接口的设计。苹果的工程师似乎对smalltalk的集合api设计并不感冒。即使很多年以前，c语言还没有block这么个东西，但是ios4.0之后的接口有了一点意思，但是还觉得差上那么一点点。
+
+##集合的枚举操作
+
+
 
 
 
