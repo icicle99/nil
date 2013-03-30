@@ -203,6 +203,48 @@ typedef id(^AccumulationBlock)(id sum, id obj);
 
 ##函数style
 
+其实cocoa编程也可以从函数式编程中汲取一些精华的东西。
+
+什么是函数式编程呢，我也不是很清楚。但是我记住了函数式编程的两个基本特性：
+
+- 函数第一性 恩，就是说函数可以当做值来用，在objective-c中就是block嘛
+- 没有副作用
+
+函数式编程和面向对象编程应该是正交的概念，显然我们可以利用上面两条基本特性来让代码质量变得更好，程序员的生活也变得更好。
+
+第一条，有了高阶函数的支持，我们就可以构造出类似于map, reduce之类的抽象
+
+第二条和前面说的mutability有某种微妙的联系，感脚上有点强加限制的意思。不过貌似计算机科学上每每做一些减法之后，总是能获得超乎寻常的能力。
+
+说了这么多玄而又玄的东西，那和cocoa的集合有毛线关系呢？
+
+我们之前说的reduce， map方法都是没有副作用的，他们看起来像数学中的函数类似，map方法无论你调用多少遍，都不会对数组对象产生神马影响。他们只是默默的产生新的数据对象。
+
+但是到目前为止，使用这些方法并没有看出来比apple推荐的快速枚举有更多的好处，除了节省了一个局部变量，除了看起来比较文艺~
+
+好吧，继续虚构一个需求：
+
+对于twitter的一个请求：
+
+		http://search.twitter.com/search.json?q=@SoundCloud&rpp=100
+		
+对于返回的tweet数组，过滤掉非dictionary类型，过滤掉英文内容，然后得到一个只包含所有推文的数组~
+
+```
+    NSArray *tweets = [json valueForKey:@"results"];
+    NSArray *result = [[[tweets select:^BOOL(id obj) {
+        return [obj isKindOfClass:[NSDictionary class]];
+    }] reject:^BOOL(NSDictionary *tweet) {
+        return [tweet[@"iso_language_code"] isEqualToString:@"en"];
+    }] map:^id(NSDictionary *tweet) {
+        return tweet[@"text"];
+    }];
+```
+
+恩，文艺么？我们大概可以想象一下全部用快速枚举还实现，会是怎样的一坨东西？这些串联起来的高阶方法，明显更加容易读懂，更加容易维护。（不过用ruby的家伙肯定说，这太啰嗦了，ruby单行就搞定。。。恩，不过语法单位上看是一样的）
+
+这里面就有一种类似于流水线的概念，原始数据拿过来，然后经过各种工序，得到想要的结果。嗯嗯，objc编程的函数式style，很文艺有没有？
+
 
 
 
