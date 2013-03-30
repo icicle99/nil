@@ -81,6 +81,127 @@ cocoa 的集合
 
 ##集合的枚举操作
 
+为了继续下面的笔记，虚构一个需求先：假设有一个数组
+
+```
+    NSArray *array = @[@1, @2, @3, @4, @5];
+
+```
+
+要求依次打印每一个数值~
+
+
+```
+//C程序员做法：
+    for (NSInteger i = 0; i < [array count]; i++) {
+        NSLog(@"%@", array[i]);
+    }
+
+//2B程序员做法：
+    NSEnumerator *enumerator = [array objectEnumerator];
+    NSNumber *obj = nil;
+    while (obj == [enumerator nextObject]) {
+        NSLog(@"%@", obj);
+    }
+
+//普通程序员：
+    for (NSNumber *obj in array) {
+        NSLog(@"%@", obj);
+    }
+
+//文艺程序员：
+    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSLog(@"%@", obj);
+    }];
+```
+
+C程序员的做法是C编程里面基本的“模式”，笔者在做C程序员的时候写这东西基本上已经内化为本能了，不过做iOS开发之后就很少这么玩了。其实在这个“模式”里面还是有很多讲究的，比如在for语句内声明变量i, 从0开始计数，半开半闭合区间等等。但是在这里面有一个本质的不同，cocoa的数组不再是C数组，这种形式显然没有C语言中的那么高效，水果公司的文档也不建议采用这种方式。另外这种方式似乎没法遍历NSDictionary和NSSet.
+
+第二种做法显然更面向对象，标准的外部迭代器用法；之所以说是2B写法，是因为实现同样的功能，多了一倍的代码，多了两个局部变量。。。类似于拒绝采用ARC的cocoa程序员，多写了好多的autorelease, 还有种莫名的优越感。。。
+
+第三种是apple推荐的用法，据说是最快的枚举方法。这种东西本质上应该是第二种做法的语法糖。有人对块糖表示过异议，认为这只是实现了一种很有局限性的操作，却增加了语言复杂度。理论上说水果公司应该提供更好的对block的支持，然后用库来实现更好的遍历方式。
+
+第四种就是上面所说的做法了，看起来功能上跟第三种快速枚举没差别。不过如果需求要求打印序数，文艺程序员就有优越感了，明显不需要多声明一个变量~
+
+下面需求变了，恩，需求又变了。。。
+
+要求对数组求和，下面只给出快速枚举和基于block的枚举方式
+
+```
+
+//快速枚举
+    NSInteger sum = 0;
+    for (NSNumber *obj in array) {
+        sum += [obj integerValue];
+    }
+    
+//文艺枚举
+    __block NSInteger sum = 0;
+    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        sum += [obj integerValue];
+    }];
+    
+```
+这下普通程序员乐了，很简单的一个累加求和，文艺用法偏偏还得加个`__block`,要多丑有多丑，文艺变2B了。。。
+
+毛主席教导我们说：当文艺显着有些2B，就说明文艺的还不够，应该沿着文艺的道路继续走下去~
+
+首先实现一个基于`NSArray`的扩展：
+
+```
+typedef id(^AccumulationBlock)(id sum, id obj);
+
+@interface NSArray (BlockKit)
+- (id)reduce:(id)initial withBlock:(AccumulationBlock)block;
+@end
+
+@implementation NSArray (BlockKit)
+- (id)reduce:(id)initial withBlock:(AccumulationBlock)block {
+    
+	__block id result = initial;
+    
+	[self enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+		result = block(result, obj);
+	}];
+    
+	return result;
+}
+
+@end
+```
+实现的细节并不是很重要，恩，丑陋的细节被封装起来了。。。
+
+于是文艺版本的求和变成了这个样子：
+
+```
+    NSInteger sum = [[array reduce:@0 withBlock:^id(id sum, id obj) {
+        return @( [sum integerValue] + [obj integerValue] );
+    }] integerValue];
+```
+
+这种做法的优势是什么？计算过程不需要局部变量参与，把那个丑陋的`__block NSInteger sum` 封装到数组的reduce方法里面去了。方法的调用者只需要关注于各个元素怎么“加和”到一起就行了。
+
+类似的还可以这么用：
+
+```
+    NSArray *mappedArray = [array reduce:@[] withBlock:^id(id sum, id obj) {
+        return [sum arrayByAddingObject:@( [obj integerValue]  * 2)];
+    }];
+```
+这个reduce方法实现的是把原数组的每个整数加倍，然后形成一个新数组。为了更好的抽象和更好的表达设计意图，一般都是再加多一个扩展，然后可以这样写：
+
+```
+    NSArray *douleArray = [array map:^id(id obj) {
+        return @( [obj integerValue] * 2 );
+    }];
+```
+
+这样有更明确的表意，更加的简单，编写代码的时只需要指名，怎样映射就好了。就是说通用逻辑由库实现，应用程序员可以只关注业务逻辑。很遗憾，苹果那些家伙并没有实现这种方法，不过没关系，我们可以用`catagory`和`block`构造出我们想要的东西。嗯嗯
+
+如果可以像苹果的工程师提意见，我最想要的foundation结合支持的方法是`reduce，map， select， reject, match`。。。
+当然了，如果他们能参考一下Ruby和smalltalk的集合实现，并且还能给objective-c加上mixin的官方支持。。。好吧，我想多了。
+
+##函数style
 
 
 
