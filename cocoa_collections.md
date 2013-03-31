@@ -246,5 +246,13 @@ typedef id(^AccumulationBlock)(id sum, id obj);
 这里面就有一种类似于流水线的概念，原始数据拿过来，然后经过各种工序，得到想要的结果。嗯嗯，objc编程的函数式style，很文艺有没有？
 
 
+##实现
 
+- [BlockKit](https://github.com/pandamonia/BlocksKit) 覆盖的比较全面，但是太全面了，对集合的支持只是一部分。不支持iOS4.3,嗯嗯， 你懂的
+
+- [Underscore](https://github.com/robb/Underscore.m) 点语法的粉丝适用，不过使用前要先转换成新类型，有点脱了裤子放屁的感脚
+- [DMCollectionKit](https://github.com/scutdavy/DMCollectionKit) 我自己的项目，暂时只实现了基于`NSArray`的扩展，感觉上基本能满足我的需求了
+- 或者自己实现一套，满足自己的需求，其实很简单的
+
+前两个项目有实现类似each的方法，建议弃用，除了文艺，似乎没有更好的优势。如果你觉得需要用each，那么用objc的快速枚举似乎是更好的选择，恩，糟糕选择中的最好选择。
 
