@@ -216,9 +216,78 @@ Composed Method
 ### Delegation
 
 不使用继承来分享实现，smalltalk
+组合方法
 
 ### Simple Delegate
 
+- 请求代理对象是否重要？
+- 代理对象的状态对代理是否重要？
+
+简单代理：代理不需要了解代理对象
+
+
+```
+@interface Vector()
+@property(strong) NSArray elements;
++ (instancetype) vectorWithInteger:(NSInteger) value;
+- (id) firstObject;
+@end
+
+@implementation
++ (instancetype) vectorWithInteger:(NSInteger) value{
+     Vector *vector = [self new];
+     vector.elements = @{ @(value) };
+     return vector;
+}
+
+- (id) firstObject{
+    return self.elements[0];
+}
+
+@end
+```
+
+### Self Delegation
+
+反向引用的问题
+
+方案之一：将主动代理对象作为参数传入
+
+
+### Double Dispatch
+
+如果代理需要对不同的主动代理做不同的逻辑，使用 Double Dispatch
+
+
+### Plubgable Behavior
+
+参数化对象不同的行为
+
+cococa的class cluster?
+
+考虑问题
+
+- 需要多大的灵活性
+- 多少方法要动态改变
+- How hard to follow the code?
+- 客户端需要指定可改变对象的行为，还是隐藏其中？
+
+target-action && block based target-action
+实用block定制代理行为
+
+
+
+### Pluggable Selector
+
+### Pluggable Block
+
+### Collecting Parameter
+
+Composed Method的缺点之一， 要求更多的实例变量
+
+实用参数代替实例变量， 参数收集结果~~~
+
+看起来很丑陋，利用返回值不好么？
 
 
 ##状态
