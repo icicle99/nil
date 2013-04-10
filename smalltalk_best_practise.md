@@ -115,4 +115,110 @@ cocoa 里面的 -description(), 模型对象的话，用Mantle默认的就不错
 
 ##消息
 
+- Message
+- Choosing Message
+- Decomposing Message
+- Intention Revealing Message
+- Doulbe Dispatch
+- Send Back
+- Super
+- Extending Supper
+- Delegation
+- Simple Delegation
+- Self Delegation
+- Pluggable Behavior
+- Pluggable Selector
+- Pluggable Block
+- Collecting Parameter
+
+### Message
+
+消息用作控制结构 多态
+
+### Choosing Messsage
+
+条件逻辑：
+
+```
+id responsible = if ([anEntry isKindOfClass:[Film class])? [anEntry producer] : [anEntry author];
+
+```
+
+多态做法
+
+```
+id responsible = [anEntry responsible]
+```
+
+
+### Decomposing Message
+
+Composed Method
+
+```
+- (void) controlActivity{
+    [self controlInitialize];
+    [self controlLoop];
+    [self controlTerminate];
+  }
+```
+
+###  Intention Revealing Message
+
+简单实现的方法， 选择器名用作文档
+
+合理命名解释目的，而不是实现
+
+@interface NSArray (IntentionRevealingMessage)
+- (BOOL) isEmpty;
+@end
+
+@implementation NSArray
+- (BOOL) isEmpty{
+    return self.count == 0;
+}
+@end
+
+### Doulbe Dispatch
+???
+
+### Send Back
+
+???
+
+### Super
+
+引用父类的行为
+
+小心使用，如果没有区别，则向`self`发消息
+
+### Extending Supper
+扩展父类的行为
+
+```
+- (instancetype) init{
+    self = [super init];
+    if (self == nil) return nil;
+    // do someting extent parent class
+    return self;
+}
+```
+
+### Modifying Supper
+
+改变父类行为
+
+缺点：形成和父类的耦合关系
+
+
+尼玛，上面的例子可能更合适
+
+### Delegation
+
+不使用继承来分享实现，smalltalk
+
+### Simple Delegate
+
+
+
 ##状态
