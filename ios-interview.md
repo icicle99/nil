@@ -70,3 +70,33 @@ ARC下的生活真是好啊，不过碰见出这种考题的面试官可就要�
 这样基本在非ARC情况下，尽可能少受到内存管理的困扰
 
 
+##多线程问题
+
+### 多进程同步问题
+提问是说多线程怎么同步，保证内存安全。
+我个人意见是加锁开销大，写过的唯一的一处代码是用的穿行队列的方式。然后高潮来了，面试官说写出来瞧瞧，恩，写不出。。。
+
+下面写一遍，加强记忆：
+
+```objc
+_lockQueue = dispatch_queue_create("lockQueue", DISPATCH_QUEUE_SERIAL);
+
+- (NSArray *) logs{
+    __block NSArray *logs = nil;
+    dispatch_sync(self.lockQueue, ^{
+        logs = _logs;
+    });
+    return logs ?: @[];
+}
+
+- (void) addLog:(DMHTTPLog *) log{
+    dispatch_async(self.lockQueue, ^{
+        _logs = [_logs arrayByAddingObject:log];
+    });
+}
+
+```
+用串行的方式来保证内存安全, 读操作使用 `dispatch_sync`，相当于串行读操作，使用`dispatch_async`异步加入写操作，这样的好处就是，让GCD retain的block来保存当前值，如果队列前面有读操作，则等待。这是一个trick。
+
+[参考连接](http://www.fieryrobot.com/blog/2010/09/01/synchronization-using-grand-central-dispatch/)
+
