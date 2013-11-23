@@ -27,7 +27,7 @@
 这道题目考察基本的引用技术模型.
 关键点在于setter的实现。
 
-* 首先要对_obj 进行release，然后对obj retain,再然后对_objc进行赋值。
+* 首先要对_obj 进行release，然后对obj retain,再然后对`_objc`进行赋值。
 * 另外，要防止obj和_obj是同一个对象，如果是同一个对象，那么先release再retain，显然是要crash的。
 
 那么setter的代码就可以这么写
