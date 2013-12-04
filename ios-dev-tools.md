@@ -1,7 +1,7 @@
 #ios 开发笔记 - 工具和环境
 
 * mac os x
-* keyRemap4macbook
+* keyRemap4Macbook
 * quicksilver
 * slate
 * 百度拼音输入法
