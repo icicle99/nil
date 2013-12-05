@@ -4,6 +4,7 @@
 * keyRemap4Macbook
 * quicksilver
 * slate
+* zephyros
 * 百度拼音输入法
 * Jumpcut
 * xcode + solarized dark + xVim
@@ -15,8 +16,14 @@
 * mou
 * zsh + oh-my-zsh
 * iterm
-* brew
+* homebrew + brew cask
 
+```shell
+ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+brew tap phinze/homebrew-cask
+brew install brew-cask
+brew cask install dropbox iexplorer iterm2 quicksilver zephyros keyRemap4Macbook nvALT mou keka macvim jumpcut skim virtualbox seashore flux ichm QQ 
+```
 
 ##mac 的配置
 
